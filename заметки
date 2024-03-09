@@ -1,0 +1,27 @@
+Последовательнось проигрывания боксов для ИК Солвера
+
+frustumCulled работает некоректно при отыгрывание анимации (проверка идёт за счёт класса Frustum который проверяет boundingSphere у object.geometry, решение при смене позы или 
+анимации обновлять geometry.computeBoundingSphere() ) итоговое решение просто повернуть объект
+
+webgl - additive animation - skinning (последняя версия для crossFading)
+
+Animation.Action - crossFading тоже само что и fadeToAction.
+
+Character:
+    для более коректной работы 3D model(орудия) должны быть напрвалены по -Y
+    вращение оружия по типу рычага с помощью изменения origin point (https://stackoverflow.com/questions/55116131/how-can-we-change-the-rotation-origin-pivot-point-of-a-three-js-object-without)
+    Animation.Action при резком переключение анимаций вызывает подёргивания при их переключении (повесить функцию при полном выполнение анимации)
+    Порядок установки ИК костей в link для 3D модели
+    threejs -> skeletone -> boneTexture ( делается автоматом )
+
+
+Задачи: 
+    1. разделить анимации всего тела на 3 группы: mixamorig(prefix) +
+        spine: Spine, Spine1, Spine2, Neck, Head, Head_end
+        hands: Shoulder, Arm, ForeArm, Hand
+        legs: UpLeg, Leg, Foot, ToBase
+    или верхняя часть тела и нижняя часть тела
+
+    2. добавить таргетовые кости для локтей ?
+    3. упрощение материалов в родительском game3Dmodel +/-
+    4. CCDIKSolver и Animation.Mixer в паралельный поток ( лучше создать новый проект )
