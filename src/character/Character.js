@@ -2,7 +2,7 @@ import { Vector3 } from "three";
 
 import StateSeparator from "./state_separator.js";
 import CameraControll from "./CameraControll.js";
-import WeaponDriver from "./WeaponDriver.js";
+import TargetBoneDriver from "./TargetBoneDriver.js";
 
 
 const vec3 = new Vector3;
@@ -13,12 +13,12 @@ export default class Character {//Mediator
 
     #stateSeparator;
     #cameraControll;
-    #weaponDriver
+    #TargetBoneDriver
 
     constructor (model, animations, callback) {
         this.#stateSeparator = new StateSeparator(model, animations, callback);
         this.#cameraControll = new CameraControll(model);
-        this.#weaponDriver = new WeaponDriver( model );
+        this.#TargetBoneDriver = new TargetBoneDriver( model );
 
         this.#target = this.#cameraControll.point;
     }
@@ -45,24 +45,27 @@ export default class Character {//Mediator
             targetVec = vec3.setFromMatrixPosition( this.#target.matrixWorld );
 
         this.#stateSeparator.update(dt);
-        this.#weaponDriver.update(targetVec);
+
+        this.#TargetBoneDriver.update();
+        this.#TargetBoneDriver.lookAt = targetVec;
+
         this.#cameraControll.update();
     }
 
     clear () {
-        this.#weaponDriver.clear();
+        this.#TargetBoneDriver.clear();
         this.#stateSeparator.clear();
 
         this.isCharacter = undefined;
         this.#stateSeparator = undefined;
         this.#cameraControll = undefined;
-        this.#weaponDriver = undefined;
+        this.#TargetBoneDriver = undefined;
         this.#target = undefined;
     }
 
     set weapon (value) {// object3D or undefined
-        if (value !== undefined) this.#weaponDriver.setWeapon( value );
-        else this.#weaponDriver.removeWeapon();
+        if (value !== undefined) this.#TargetBoneDriver.setWeapon( value );
+        else this.#TargetBoneDriver.removeWeapon();
     }
 
     get camera () {
@@ -70,6 +73,6 @@ export default class Character {//Mediator
     }
 
     get weaponShift () {
-        return this.#weaponDriver.aimShoulderShift;
+        return this.#TargetBoneDriver.aimShoulderShift;
     }
 }

@@ -1,4 +1,4 @@
-import { Euler, Vector3, SphereGeometry, MeshBasicMaterial, Mesh, PerspectiveCamera, Matrix4 } from 'three';
+import { Euler, Vector3, SphereGeometry, MeshBasicMaterial, Mesh, PerspectiveCamera } from 'three';
 
 const vec3 = new Vector3;
 const _PI_2 = Math.PI / 2;
@@ -6,8 +6,8 @@ const _euler = new Euler( 0, 0, 0, 'YXZ' );
 
 export default class CameraControll {
 	// Установите ограничение наклона камеры. Диапазон от 0 до радиан Math.PI.
-	minPolarAngle = 0; // radians
-	maxPolarAngle = Math.PI; // radians
+	minPolarAngle = (30/180)*Math.PI; // radians
+	maxPolarAngle = (150/180)*Math.PI; // radians
 	pointerSpeed = 1.0;
 	
 	point;

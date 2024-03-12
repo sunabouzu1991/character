@@ -24,14 +24,14 @@ class AbstractState {
 	}
 }
 
-// bodyPart = {base_: weight, spine_: weight, hands_: weight, legs_: weight}
+// bodyPart = {spine_: weight, hands_: weight, legs_: weight}
 // если не указываем bodyPart то анимация проигрывается по имени на всё тело
 
 class Stand extends AbstractState {
-	walk_forward = { name: "stand_forward_walk_rifle", bodyPart: {base_: 1, spine_: 1, hands_: 1, legs_: 1}, ikOff: ['spine'] };
-	walk_backward = { name: "stand_backward_walk_rifle", bodyPart: {base_: 1, spine_: 1, hands_: 1, legs_: 1}, ikOff: ['spine'] };
-	walk_left = { name: "stand_left_walk_rifle", bodyPart: {base_: 1, spine_: 1, hands_: 1, legs_: 1}, ikOff: ['spine'] };
-	walk_right = { name: "stand_right_walk_rifle", bodyPart: {base_: 1, spine_: 1, hands_: 1, legs_: 1}, ikOff: ['spine'] };
+	walk_forward = { name: "stand_forward_walk_rifle", bodyPart: { spine_: 1, legs_: 1}, ikOff: ['spine'] };
+	walk_backward = { name: "stand_backward_walk_rifle", bodyPart: { spine_: 1, legs_: 1}, ikOff: ['spine'] };
+	walk_left = { name: "stand_left_walk_rifle", bodyPart: { spine_: 1, legs_: 1}, ikOff: ['spine'] };
+	walk_right = { name: "stand_right_walk_rifle", bodyPart: { spine_: 1, legs_: 1}, ikOff: ['spine'] };
 
 	walk_forwardleft = {name: "stand_forwardLeft_walk_rifle"};
 	walk_forwardright = {name: "stand_forwardRight_walk_rifle"};
@@ -54,7 +54,7 @@ class Stand extends AbstractState {
 
 	jump = { }
 
-	default = { name:"idle_rifle", bodyPart: {base_: 1, spine_: 1, hands_: .2, legs_: 1}, ikOff: ['spine'] }
+	default = { name:"idle_rifle", bodyPart: { spine_: 1, hands_: .2, legs_: 1}, ikOff: ['spine'] }
 
 	constructor(context) {
 		super(context);

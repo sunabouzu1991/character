@@ -54,7 +54,6 @@ export default class RecordPlayer {
 	#duration;
 
 	#bodyActions = new Map ([
-		['base_' , undefined],
 		['spine_' , undefined],
 		['hands_' , undefined],
 		['legs_' , undefined]
@@ -88,7 +87,7 @@ export default class RecordPlayer {
 			this.#duration = duration;
 		}
 
-		// bodyPart = {base_: weight, spine_: weight, hands_: weight, 'legs_: weight}
+		// bodyPart = {spine_: weight, hands_: weight, 'legs_: weight}
 		if (bodyPart)
 			for ( const [key, value] of this.#bodyActions ) {
 				if (bodyPart[key] !== undefined) 

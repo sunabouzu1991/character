@@ -8,7 +8,6 @@ webgl - additive animation - skinning (последняя версия для cr
 Animation.Action - crossFading тоже само что и fadeToAction.
 
 Character:
-    для более коректной работы 3D model(орудия) должны быть напрвалены по -Y
     вращение оружия по типу рычага с помощью изменения origin point (https://stackoverflow.com/questions/55116131/how-can-we-change-the-rotation-origin-pivot-point-of-a-three-js-object-without)
     Animation.Action при резком переключение анимаций вызывает подёргивания при их переключении (повесить функцию при полном выполнение анимации)
     Порядок установки ИК костей в link для 3D модели
@@ -25,5 +24,3 @@ Character:
     2. добавить таргетовые кости для локтей ?
     3. упрощение материалов в родительском game3Dmodel +/-
     4. CCDIKSolver и Animation.Mixer в паралельный поток ( лучше создать новый проект )
-
-test commit

@@ -1,6 +1,6 @@
-import { Vector3, Object3D } from "three";
+import { Vector3, Group } from "three";
 
-/*WeaponDriver связан с RecordPlayer, CCDIKSolver;     Использует меши человека, оружия, скелета(кость головы);      Использует vec3 lookAt(vec3) головы и оружия
+/*TargetBoneDriver связан с RecordPlayer, CCDIKSolver;     Использует меши человека, оружия, скелета(кость головы);      Использует vec3 lookAt(vec3) головы и оружия
 режимы:
     прицеливание: 
         1) таргет для головы будет добавлятся в {оружие->позиция для головы} 
@@ -13,11 +13,11 @@ import { Vector3, Object3D } from "three";
 
 var vec3 = new Vector3;
 
-export default class WeaponDriver {
+export default class TargetBoneDriver {
     #aimShoulder;
     aimShoulderShift;
 
-    #weaponBox;
+    #boneBox;
 
     #box;
     #weapon;
@@ -33,36 +33,35 @@ export default class WeaponDriver {
 
     constructor ( model ) {
         this.#mSetting = model.wnDrSettings;
-        this.#weaponBox = new Object3D(); //контейнер под оружие
+        this.#boneBox = new Group(); //контейнер под оружие
         this.#box = model.mesh;
-        this.#box.add(this.#weaponBox);
+        this.#box.add(this.#boneBox);
         this.#aimShoulder = model.mesh.getObjectByName(this.#mSetting.aimShoulder);
         this.aimShoulderShift = this.#mSetting.aimShoulderShift.clone();
 
-        for ( const [key, value] of this.#iks )
-			this.#iks.set( key, this.#box.getObjectByName( this.#mSetting[key] ) );
+        for ( const [key, value] of this.#iks ) {
+            const bone = this.#box.getObjectByName( this.#mSetting[key] );
+			this.#iks.set( key, bone );
+            this.#boneBox.add( bone );
+        }
     }
 
     #activation () {
         for ( const [key, value] of this.#iks ) {
             value.position.copy(this.#wSetting[key].position);
             value.rotation.setFromVector3(this.#wSetting[key].rotation);
-            this.#weaponBox.add( value );
         }
     }
 
-    update (target) {
+    update () {
         vec3.setScalar(0);
         this.#aimShoulder.localToWorld(vec3);
         this.#box.worldToLocal(vec3);
 
-        this.#weaponBox.position.copy(vec3);
-        this.#weaponBox.position.add(this.aimShoulderShift);
+        this.#boneBox.position.copy(vec3);
+        this.#boneBox.position.add(this.aimShoulderShift);
 
-        if (target !== undefined)
-            this.#weaponBox.lookAt( target );
-
-        this.#weaponBox.updateMatrixWorld(true);
+        this.#boneBox.updateMatrixWorld(true);
     }
 
     //добавление оружия в руки
@@ -72,7 +71,7 @@ export default class WeaponDriver {
         this.#weapon = weapon.mesh;
         this.#wSetting = weapon.wnDrSettings;
 
-        this.#weaponBox.add(weapon.mesh);
+        this.#boneBox.add(weapon.mesh);
         this.#activation();
     }
 
@@ -80,18 +79,22 @@ export default class WeaponDriver {
     removeWeapon (){
         if (!this.#weapon) return;
 
-        this.#weaponBox.remove(this.#weapon.mesh);
+        this.#boneBox.remove(this.#weapon.mesh);
         this.#weapon = undefined;
         this.#wSetting = undefined;
     }
 
     clear () {
         this.#aimShoulder = undefined;
-        this.#weaponBox = undefined;
+        this.#boneBox = undefined;
         this.#box = undefined;
         this.#weapon = undefined;
         this.#mSetting = undefined;
         this.#wSetting = undefined;
         this.#iks = undefined;
+    }
+
+    set lookAt (value) {
+        this.#boneBox.lookAt( value );
     }
 }

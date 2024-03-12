@@ -19,10 +19,9 @@ export default class Animation3D extends AbstractModelSetting {
         
         this.mesh.forEach(clip => 
             groupClips.push(
-                this.#createToClip(clip, 'base_', ['Hips', 'Armature']), 
                 this.#createToClip(clip, 'spine_', ['Spine', 'Spine1', 'Spine2', 'Neck', 'Head']), 
                 this.#createToClip(clip, 'hands_', ['Shoulder', 'Arm', 'ForeArm', 'Hand']), 
-                this.#createToClip(clip, 'legs_', ['UpLeg', 'Leg', 'Foot', 'ToBase']), 
+                this.#createToClip(clip, 'legs_', ['Armature', 'Hips', 'UpLeg', 'Leg', 'Foot', 'ToBase']), 
             )
         );
 
