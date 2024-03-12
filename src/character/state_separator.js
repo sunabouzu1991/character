@@ -21,8 +21,8 @@ export default class StateSeparator {
 
     constructor (model, animations, callback) {
         //нужен объект с анимациями и скелетом
-        this.#player = new RecordPlayer( model.multithreading.skinnedMesh, animations, callback );
-        this.#iksoler = new CCDIKManager( model.multithreading.skinnedMesh, model.ikSettings );
+        this.#player = new RecordPlayer( model.skinnedMesh, animations, callback );
+        this.#iksoler = new CCDIKManager( model.skinnedMesh, model.ikSettings );
     }
 
     setState (value) {

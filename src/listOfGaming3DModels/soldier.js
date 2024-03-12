@@ -104,10 +104,6 @@ export default class Soldier3D extends Model3DSetting {
         //fromTheHip: , //от бедра
     };
 
-    multithreading = {
-        skinnedMesh: undefined
-    };
-
     cameraSetting = {
         bone: 'bone_camera'
     }
@@ -130,20 +126,7 @@ export default class Soldier3D extends Model3DSetting {
             item.effector = getBoneIndex(this.mesh, skinnedMesh.skeleton, item.effector);
             item.links.forEach( link => link.index = getBoneIndex(this.mesh, skinnedMesh.skeleton, link.index) );
         });
-
-        this.multithreading.skinnedMesh = this.mesh.getObjectByName("shevron_1").clone();
-        this.multithreading.skinnedMesh.material = null;
-        this.multithreading.skinnedMesh.geometry = null;
-        const skeleton = this.multithreading.skinnedMesh.skeleton;
-        let temporaryMatrix;
-        skeleton.boneInverses.forEach(matrix => {
-            temporaryMatrix = matrix.elements;
-            matrix.elements = new Float32Array( new SharedArrayBuffer( matrix.elements.length*4 ) );
-            matrix.elements.set(temporaryMatrix);
-        });
-        temporaryMatrix = skeleton.boneMatrices;
-        skeleton.boneMatrices = new Float32Array( new SharedArrayBuffer( skeleton.boneMatrices.byteLength ) );
-        skeleton.boneMatrices.set(temporaryMatrix);
+        this.skinnedMesh = skinnedMesh;
     }
 
     get ikSettings () {
