@@ -1,4 +1,4 @@
-import Model3DSetting from "./game3Dmodel.js";
+import ModelSetting from "./ModelSetting.js";
 import { Vector3 } from "three";
 
 function getBoneIndex(object, skeleton, name){
@@ -6,7 +6,15 @@ function getBoneIndex(object, skeleton, name){
     return skeleton.bones.indexOf(bone);
 }
 
-export default class Soldier3D extends Model3DSetting {
+
+/** @typedef {ParameterizedCharacter} ParameterizedCharacter */
+
+/** параметризованный персонаж
+ * @class
+ * @static {string} fileType - указываем расширения файла
+ * @static {string} fileSource - указываем путь к файлу
+*/
+export default class ParameterizedCharacter extends ModelSetting {
     static fileType = 'gltf';
     static fileSource = '../../models/soldier/soldier.gltf';
 

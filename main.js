@@ -8,7 +8,7 @@ import { TransformControls } from 'three/addons/controls/TransformControls.js';
 import Engine from './src/engine/engine.js';
 import Stats from 'three/addons/libs/stats.module.js';
 
-import Soldier3D from './src/listOfGaming3DModels/soldier.js';
+import ParameterizedCharacter from './src/listOfGaming3DModels/ParameterizedCharacter.js';
 import Ground3D from './src/listOfGaming3DModels/ground.js';
 import Animation3D from './src/listOfGaming3DModels/animations.js';
 import Akms3D from './src/listOfGaming3DModels/akms.js';
@@ -27,10 +27,10 @@ var data = document.getElementById('data');
 var viewWindow = document.getElementById('app');
 var onPointerLockClick = document.getElementById('onPointerLockClick');
 
-[Soldier3D, Animation3D, Akms3D].forEach( item => item.load() );
+[ParameterizedCharacter, Animation3D, Akms3D].forEach( item => item.load() );
 
 function initialize () {
-	var soldier = new Soldier3D();
+	var soldier = new ParameterizedCharacter();
 	var animations = new Animation3D();
 	var akms = new Akms3D();
 

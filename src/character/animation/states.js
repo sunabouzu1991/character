@@ -1,7 +1,19 @@
-class AbstractState {
+/** 
+ * @typedef { {spine_: number, hands_: number, legs_: number} } bodyPart - анимации разбитые по частям, number это вес проигываемой части тела 0-1
+ * @typedef { string[] } ikOff - список отключяемых ИК связей, указывается ParameterizedCharacter.#iks[0].name связи 
+ * @typedef { {name: string, once: Boolean, timeScale: number, bodyPart: bodyPart, ikOff: ikOff} } substate - подсостояние
+ * @typedef {State} State
+*/
+
+
+/** State - Абстрактный класс
+ * @class
+ * @method getSubstate - возвращает подсостояние
+*/
+class State {
 	constructor() {
-		if(this.constructor === AbstractState)
-			throw new Error("Класс AbstractState имеет абстрактный тип и не может быть создан.");
+		if(this.constructor === State)
+			throw new Error("Класс State имеет абстрактный тип и не может быть создан.");
 		this.#checkMethod();
 	}
 
@@ -10,7 +22,8 @@ class AbstractState {
 			//throw new Error("Метод Enter должен быть реализован")
 	}
 
-	getSubstate (value) {// value: string
+	/**@param {string} value  @return {substate}*/
+	getSubstate (value) {
 		let anim;
 		if(value === '')
 			anim = this.default; //idle
@@ -24,10 +37,9 @@ class AbstractState {
 	}
 }
 
-// bodyPart = {spine_: weight, hands_: weight, legs_: weight}
 // если не указываем bodyPart то анимация проигрывается по имени на всё тело
 
-class Stand extends AbstractState {
+class Stand extends State {
 	walk_forward = { name: "stand_forward_walk_rifle", bodyPart: { spine_: 1, legs_: 1}, ikOff: ['spine'] };
 	walk_backward = { name: "stand_backward_walk_rifle", bodyPart: { spine_: 1, legs_: 1}, ikOff: ['spine'] };
 	walk_left = { name: "stand_left_walk_rifle", bodyPart: { spine_: 1, legs_: 1}, ikOff: ['spine'] };
@@ -56,12 +68,12 @@ class Stand extends AbstractState {
 
 	default = { name:"idle_rifle", bodyPart: { spine_: 1, hands_: .2, legs_: 1}, ikOff: ['spine'] }
 
-	constructor(context) {
-		super(context);
+	constructor() {
+		super();
 	}
 }
 
-class Crouch extends AbstractState {
+class Crouch extends State {
 	walk_forward = {name: "crouch_forward_walk_rifle", };
 	walk_backward = {name: "crouch_backward_walk_rifle", };
 	walk_left = {name: "crouch_left_walk_rifle", };
@@ -86,12 +98,12 @@ class Crouch extends AbstractState {
 
 	default = {name:"crouch_idle_rifle", };
 
-	constructor(context) {
-		super(context);
+	constructor() {
+		super();
 	}
 }
 
-class Prone extends AbstractState {
+class Prone extends State {
 	walk_forward = {name: "prone_forward_walk_rifle",  ikOff: ['spine', 'left_hand']}
 	walk_backward = {name: "prone_forward_walk_rifle", timeScale: -1, ikOff: ['spine', 'left_hand']}
 	walk_left = {name:"prone_left_walk_rifle",  ikOff: ['spine', 'left_hand']}
@@ -101,12 +113,12 @@ class Prone extends AbstractState {
 
 	default = {name:"prone_idle_rifle",  ikOff: ['spine']}
 
-	constructor(context) {
-		super(context);
+	constructor() {
+		super();
 	}
 }
 
-class Death extends AbstractState {
+class Death extends State {
 	stand = {once: true,  }
 	crouch = {once: true,  }
 	prone = {once: true,  }
@@ -114,22 +126,22 @@ class Death extends AbstractState {
 
 	default = {once: true,  }
 
-	constructor(context) {
-		super(context);
+	constructor() {
+		super();
 	}
 }
 
-class Interaction extends AbstractState {
+class Interaction extends State {
 	crouch_working = { }
 
 	default = false
 
-	constructor(context) {
-		super(context);
+	constructor() {
+		super();
 	}
 }
 
-class PosesBehindTheObject extends AbstractState {
+class PosesBehindTheObject extends State {
 	ptrk = { }
 	ags = { }
 	dshk = { }
@@ -141,12 +153,12 @@ class PosesBehindTheObject extends AbstractState {
 
 	default = {}
 
-	constructor(context) {
-		super(context);
+	constructor() {
+		super();
 	}
 }
 
-class Transitions extends AbstractState {
+class Transitions extends State {
 	crouch_stand = {name:"idle_rifle", once: true}
 	crouch_prone = {name:"crouch_to_prone_rifle", once: true, ikOff: ['spine']}
 
@@ -156,8 +168,8 @@ class Transitions extends AbstractState {
 	stand_crouch = {name:"crouch_idle_rifle", once: true, ikOff: ['spine']}
 	stand_prone = {name:"crouch_to_prone_rifle", once: true, ikOff: ['spine']}
 
-	constructor(context) {
-		super(context);
+	constructor() {
+		super();
 	}
 }
 

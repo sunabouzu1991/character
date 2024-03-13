@@ -1,15 +1,45 @@
 import { CCDIKSolver } from 'three/addons/animation/CCDIKSolver.js';
-import { Quaternion } from 'three';
+import { Object3D, Quaternion, Vector3 } from 'three';
+
+/**
+ * @typedef {import('../state_separator.js').ParameterizedCharacter} ParameterizedCharacter
+
+ * @typedef Link - 
+ * @type {object}
+ * @property {number} index — Связывающая кость.
+ * @property {Vector3} limitation — (опционально) Ось вращения. По умолчанию не определено.
+ * @property {Vector3 | undefined} rotationMin — (необязательно) Минимальный предел вращения. По умолчанию не определено.
+ * @property {Vector3 | undefined} rotationMax — (необязательно) Максимальный предел вращения. По умолчанию не определено.
+ * @property {boolean | true} enabled — (необязательно) Значение по умолчанию — true.
+
+ * @typedef boneNode - 
+ * @type {object}
+ * @property {number} target — Целевая кость. 
+ * @property {number} effector — Эффекторная кость.
+ * @property {Link[]} links — Массив Link, определяющих кости ссылок.
+ * @property {number} iteration — (необязательно) Номер итерации расчета. Меньше — быстрее, но менее точно. По умолчанию — 1.
+ * @property {number} minAngle — (необязательно) Минимальный угол поворота за шаг. По умолчанию не определено.
+ * @property {number} maxAngle — (необязательно) Максимальный угол поворота за шаг. По умолчанию не определено.
+
+ * @typedef { boneNode[] } iks - Массив boneNode, определяющий параметр IK.target, effector и link-index — это целые числа индекса в .skeleton.bones. 
+    Отношение костей должно быть «links[n],links[n-1],...,links[0], effector» в порядке от родителя к дочернему элементу.
+*/
 
 const qSourceWorld = new Quaternion();
 const qDestParentWorld = new Quaternion();
 
+
+/**
+ * @class
+ */
 class IKSolver extends CCDIKSolver {
 
+    /** @param {Object3D} mesh  @param {iks} iks */
     constructor ( mesh, iks ) {
         super( mesh, iks )
     }
 
+    /** @param {*} ik  */
     updateOne ( ik ) {
         if (ik.off === true) return;
 
@@ -54,7 +84,7 @@ export default class CCDIKManager {
         });
     }
 
-    update(target) {
+    update() {
         this.#engine.update();
     }
 

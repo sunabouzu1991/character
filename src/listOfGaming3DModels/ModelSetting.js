@@ -6,15 +6,15 @@ const uuidSearch = (uuid, array) => {
     return false;
 }
 
-export default class Model3DSetting { //Abstract
+export default class ModelSetting { //Abstract
 	static mesh;
     static fileType;
     static fileSource;
 	static type3D = 'mesh';
 
 	constructor() {
-		if(this.constructor === Model3DSetting)
-			throw new Error("Класс Model3DSetting имеет абстрактный тип и не может быть создан.");
+		if(this.constructor === ModelSetting)
+			throw new Error("Класс ModelSetting имеет абстрактный тип и не может быть создан.");
 		this.#checkMethod();
 
 		// если имеется анимация (this.constructor.mesh обращение к static mesh)

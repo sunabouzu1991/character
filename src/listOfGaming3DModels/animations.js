@@ -1,6 +1,6 @@
 import { AnimationClip } from "three";
 
-import AbstractModelSetting from "./game3Dmodel";
+import AbstractModelSetting from "./ModelSetting";
 
 export default class Animation3D extends AbstractModelSetting {
     static fileType = 'gltf';

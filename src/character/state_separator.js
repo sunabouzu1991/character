@@ -2,6 +2,13 @@ import RecordPlayer from "./animation/RecordPlayer.js";
 import CCDIKManager from "./animation/CCDIKManager.js";
 import { Stand, Crouch, Prone, Death, Interaction, PosesBehindTheObject, Transitions } from './animation/states.js';
 
+/** 
+ * @typedef { import('./animation/states.js').State } State
+ * @typedef { import('./animation/states.js').substate } substate
+ * @typedef { import('../listOfGaming3DModels/ParameterizedCharacter.js').ParameterizedCharacter } ParameterizedCharacter
+*/
+
+/** @type {Object.<keyof, State>} */
 const states = {
     stand: Stand,
     crouch: Crouch,
@@ -12,23 +19,37 @@ const states = {
     posechange: Transitions
 };
 
+/** StateSeparator класс Посредник
+ * @class
+ * @property #state - запоминает текущее состояние
+ * @property #player - Плэер для проигрывания subState
+ * @property #iksolver - Инверсная кинематика Cyclic Coordinate Descent Inverse Kynematic(CCD IK)
+ * @property #substate -
+*/
 export default class StateSeparator {
+    /**@type {State} */
     #state;
+    /**@type {RecordPlayer} */
     #player;
+    /**@type {CCDIKManager} */
     #iksoler;
 
+    /**@type {substate} */
     #subState;
 
+    /**@param {ParameterizedCharacter} model  @param {AnimationClip[]} animations  @param {Function} callback */
     constructor (model, animations, callback) {
         //нужен объект с анимациями и скелетом
         this.#player = new RecordPlayer( model.skinnedMesh, animations, callback );
         this.#iksoler = new CCDIKManager( model.skinnedMesh, model.ikSettings );
     }
 
+    /**@param {string} value*/
     setState (value) {
         this.#state = new states[value];
     }
 
+    /**@param {string} value  */
     setSubState (value) {
         this.#subState = this.#state.getSubstate(value);
         this.#play();
@@ -39,6 +60,7 @@ export default class StateSeparator {
         this.#iksoler.iksSwitch( this.#subState.ikOff );
     }
 
+    /**@param {number} dt*/
     update(dt) {
         this.#player.update(dt);
         this.#iksoler.update();

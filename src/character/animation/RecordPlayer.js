@@ -1,19 +1,37 @@
-import { AnimationMixer, LoopOnce } from "three";
+import { AnimationAction, AnimationClip, AnimationMixer, LoopOnce, SkinnedMesh } from "three";
 
-class BodyAction {
-	parent;
+/**
+ * @typedef {import('./states.js').bodyPart} bodyPart
+*/
+
+/** 
+ * @class
+ * @property {RecordPlayer} player
+ * @property {string} action
+ * @property {number} timeScale
+ * @method setAction - указываем настройки для проигрывания анимации
+ */
+class PartBodyAnimation {
+	/**@type {RecordPlayer} */
+	player;
+	/**@type {string} */
 	action;
+	/**@type {number} */
 	timeScale;
 
-	constructor (parent) {
-		this.parent = parent;
+	/**@param {RecordPlayer} player  */
+	constructor (player) {
+		this.player = player;
 	}
 
+	/**
+	 * @param {string} name @param {boolean} once @param {number} timeScale 
+	 * @param {number} duration @param {number} [weight=1] */
 	setAction (name, once, timeScale, duration, weight = 1) {
 		if (name === this.action && this.timeScale === timeScale) return;
 
-		let previousAction = this.parent.getActionByName(this.action);
-		let action = this.parent.getActionByName(name);
+		const previousAction = this.player.getActionByName(this.action);
+		const action = this.player.getActionByName(name);
 
 		this.timeScale = timeScale;
 		this.action = name;
@@ -28,8 +46,7 @@ class BodyAction {
 			previousAction.fadeOut( duration );
 
 		if ( action !== undefined && weight !== 0)
-			action
-				.reset()
+			action.reset()
 				.setEffectiveTimeScale( timeScale )
 				.setEffectiveWeight( weight )
 				.fadeIn( duration )
@@ -37,28 +54,40 @@ class BodyAction {
 	}
 
 	clear () {
-		this.parent = undefined;
+		this.player = undefined;
 		this.action = undefined;
+		this.timeScale = undefined;
 	}
 }
 
 
-
+/**
+ * @class
+ * @method fadeToAction - посылаем настройки подсостояния для проигрывания анимации
+ */
 export default class RecordPlayer {
+	/**@type {AnimationMixer}*/
 	#mixer;
+	/** @type {Object.<string, AnimationAction>} */
 	#actions = {};
 
+	/** @type {Function} */
 	#callback;
 
+	/** @type {setInterval} */
 	#interval;
+
+	/** @type {number} */
 	#duration;
 
+	/** @type {Map<string, PartBodyAnimation>} */
 	#bodyActions = new Map ([
 		['spine_' , undefined],
 		['hands_' , undefined],
 		['legs_' , undefined]
 	]);
 
+	/** @param {SkinnedMesh} object  @param {AnimationClip[]} animations  @param {Function} callback */
 	constructor (object, animations, callback) {
 		//объект с анимациями
 		this.#mixer = new AnimationMixer(object);
@@ -73,10 +102,14 @@ export default class RecordPlayer {
 		this.#callback = callback;
 
 		for ( const [key, value] of this.#bodyActions )
-			this.#bodyActions.set( key, new BodyAction(this) );
+			this.#bodyActions.set( key, new PartBodyAnimation(this) );
 	}
 
-    fadeToAction (name, bodyPart, once, timeScale = 1, duration = 0.4) {//str, obj, num, bool, timeInSec
+	/**
+	 * @param {string} name  @param {bodyPart} bodyPart  @param {boolean} once  
+	 * @param {number} [timeScale=1]  @param {number} [duration=0.4]
+	*/
+    fadeToAction (name, bodyPart, once, timeScale = 1, duration = 0.4) {
 		if (this.#interval === undefined) {
 			this.#interval = setInterval(this.#callback, duration*1000);
 			this.#duration = duration;
@@ -87,7 +120,6 @@ export default class RecordPlayer {
 			this.#duration = duration;
 		}
 
-		// bodyPart = {spine_: weight, hands_: weight, 'legs_: weight}
 		if (bodyPart)
 			for ( const [key, value] of this.#bodyActions ) {
 				if (bodyPart[key] !== undefined) 
@@ -99,6 +131,10 @@ export default class RecordPlayer {
 			}
     }
 
+	/**
+	 * @param {string} value 
+	 * @return {AnimationAction}
+	 */
 	getActionByName (value) {
 		if(this.#actions[value] === undefined) {
 			console.error(this.constructor.name ,`Анимация: ${value} отсутствует`);

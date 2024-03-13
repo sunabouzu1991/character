@@ -1,4 +1,4 @@
-import Model3DSetting from "./game3Dmodel.js";
+import Model3DSetting from "./ModelSetting.js";
 import { Vector3 } from "three";
 
 export default class Akms3D extends Model3DSetting {

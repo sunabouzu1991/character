@@ -31,8 +31,8 @@ export default class Character {
         this.#stateSeparator.setSubState(value);
     }
 
-    userCamRotate (x, y, pointerSpeed, maxPolarAngle, minPolarAngle) {
-        this.#cameraControll.camRotate(x, y, pointerSpeed, maxPolarAngle, minPolarAngle);
+    userCamRotate (x, y) {
+        this.#cameraControll.camRotate(x, y);
     }
 
     userCamSetting (speed, minAngle, maxAngle) {
@@ -60,7 +60,7 @@ export default class Character {
 
     set weapon (value) {// object3D or undefined
         if (value !== undefined) this.#targetBoneDriver.object = value;
-        else this.#targetBoneDriver.removeWeapon();
+        else this.#targetBoneDriver.removeObject();
     }
 
     get camera () {
