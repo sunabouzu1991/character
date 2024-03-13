@@ -1,26 +1,26 @@
-import { Vector3 } from "three";
-
 import StateSeparator from "./state_separator.js";
 import CameraControll from "./CameraControll.js";
 import TargetBoneDriver from "./TargetBoneDriver.js";
 
 
-const vec3 = new Vector3;
-
-export default class Character {//Mediator
+/** Character класс Посредник
+ * @class
+ * @property {Boolean} isCharacter
+ * @property {StateSeparator} #stateSeparator
+ * @property {CameraControll} #cameraControll
+ * @property {TargetBoneDriver} #targetBoneDriver
+ */
+export default class Character {
     isCharacter = true;
-    #target
 
     #stateSeparator;
     #cameraControll;
-    #TargetBoneDriver
+    #targetBoneDriver;
 
     constructor (model, animations, callback) {
         this.#stateSeparator = new StateSeparator(model, animations, callback);
         this.#cameraControll = new CameraControll(model);
-        this.#TargetBoneDriver = new TargetBoneDriver( model );
-
-        this.#target = this.#cameraControll.point;
+        this.#targetBoneDriver = new TargetBoneDriver(model);
     }
 
     setState (value) {
@@ -40,32 +40,27 @@ export default class Character {//Mediator
     }
 
     update(dt){
-        let targetVec;
-        if (this.#target !== undefined)
-            targetVec = vec3.setFromMatrixPosition( this.#target.matrixWorld );
+        let targetVec = this.#cameraControll.aimPoint;
+        this.#targetBoneDriver.lookAt = targetVec;
 
         this.#stateSeparator.update(dt);
-
-        this.#TargetBoneDriver.update();
-        this.#TargetBoneDriver.lookAt = targetVec;
-
+        this.#targetBoneDriver.update();
         this.#cameraControll.update();
     }
 
     clear () {
-        this.#TargetBoneDriver.clear();
+        this.#targetBoneDriver.clear();
         this.#stateSeparator.clear();
 
         this.isCharacter = undefined;
         this.#stateSeparator = undefined;
         this.#cameraControll = undefined;
-        this.#TargetBoneDriver = undefined;
-        this.#target = undefined;
+        this.#targetBoneDriver = undefined;
     }
 
     set weapon (value) {// object3D or undefined
-        if (value !== undefined) this.#TargetBoneDriver.setWeapon( value );
-        else this.#TargetBoneDriver.removeWeapon();
+        if (value !== undefined) this.#targetBoneDriver.object = value;
+        else this.#targetBoneDriver.removeWeapon();
     }
 
     get camera () {
@@ -73,6 +68,6 @@ export default class Character {//Mediator
     }
 
     get weaponShift () {
-        return this.#TargetBoneDriver.aimShoulderShift;
+        return this.#targetBoneDriver.aimShoulderShift;
     }
 }

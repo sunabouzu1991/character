@@ -1,100 +1,110 @@
-import { Vector3, Group } from "three";
-
-/*TargetBoneDriver связан с RecordPlayer, CCDIKSolver;     Использует меши человека, оружия, скелета(кость головы);      Использует vec3 lookAt(vec3) головы и оружия
-режимы:
-    прицеливание: 
-        1) таргет для головы будет добавлятся в {оружие->позиция для головы} 
-        2) включатся ИК для спины
-        3) оружие позиционируется по плечевой кости (ключица) модели
-    расслабленный(желательно оружие перемещается по кисти от установленной анимации):
-
-примечания: не должен вращать кости! Оставить вращение и доводку для костей в CCDIKSolver или же выполнять действие перед обновлением CCDIKSolver
-*/
+import { Vector3, Group, Object3D } from "three";
 
 var vec3 = new Vector3;
 
+/** TargetBoneDriver - управление таргетовыми костями в коробке.
+ * @class
+ * @property {Bone} #aimShoulder - точка крепления для Object3D
+ * @property {Vector3} #aimShoulderShift - смещение от точки крепления
+ * @property {Group} #boneBox - коробка для таргетовых костей
+ * @property {Object3D} #space - Родительское пространство для коробки(boneBox)
+ * @property {Object3D} #interactionObject - объект для крепления в коробку
+ * @property {Object} #spaceSetting - настройки для TargetBoneDriver
+ * @property {Object} #IOSetting - настройки для таргетовых костей
+ * @property {{}Bone} #targetBones - список таргетовы костей
+ */
 export default class TargetBoneDriver {
+    /**@type {Bone}*/
     #aimShoulder;
-    aimShoulderShift;
+    /** @type {Vector3} */
+    #aimShoulderShift;
 
+    /** @type {Group} */
     #boneBox;
 
-    #box;
-    #weapon;
+    /** @type {Object3D} */
+    #space;
+    /** @type {Object3D} */
+    #interactionObject;
 
-    #mSetting;
-    #wSetting;
+    /** @type {Object} */
+    #spaceSetting;
+    /** @type {Object} */
+    #IOSetting;
 
-    #iks = new Map ([
+    /** @type {Map<string, Object3D>} */
+    #targetBones = new Map ([
 		['forend', undefined],
 		['hilt', undefined],
 		['head', undefined]
 	]);
 
     constructor ( model ) {
-        this.#mSetting = model.wnDrSettings;
+        this.#spaceSetting = model.wnDrSettings;
         this.#boneBox = new Group(); //контейнер под оружие
-        this.#box = model.mesh;
-        this.#box.add(this.#boneBox);
-        this.#aimShoulder = model.mesh.getObjectByName(this.#mSetting.aimShoulder);
-        this.aimShoulderShift = this.#mSetting.aimShoulderShift.clone();
+        this.#space = model.mesh;
+        this.#space.add(this.#boneBox);
+        this.#aimShoulder = model.mesh.getObjectByName(this.#spaceSetting.aimShoulder);
+        this.#aimShoulderShift = this.#spaceSetting.aimShoulderShift.clone();
 
-        for ( const [key, value] of this.#iks ) {
-            const bone = this.#box.getObjectByName( this.#mSetting[key] );
-			this.#iks.set( key, bone );
+        for ( const [key, value] of this.#targetBones ) {
+            const bone = this.#space.getObjectByName( this.#spaceSetting[key] );
+			this.#targetBones.set( key, bone );
             this.#boneBox.add( bone );
         }
     }
 
     #activation () {
-        for ( const [key, value] of this.#iks ) {
-            value.position.copy(this.#wSetting[key].position);
-            value.rotation.setFromVector3(this.#wSetting[key].rotation);
+        for ( const [key, value] of this.#targetBones ) {
+            value.position.copy(this.#IOSetting[key].position);
+            value.rotation.setFromVector3(this.#IOSetting[key].rotation);
         }
     }
 
     update () {
         vec3.setScalar(0);
         this.#aimShoulder.localToWorld(vec3);
-        this.#box.worldToLocal(vec3);
+        this.#space.worldToLocal(vec3);
 
         this.#boneBox.position.copy(vec3);
-        this.#boneBox.position.add(this.aimShoulderShift);
+        this.#boneBox.position.add(this.#aimShoulderShift);
 
         this.#boneBox.updateMatrixWorld(true);
     }
 
-    //добавление оружия в руки
-    setWeapon ( weapon ) {
-        this.removeWeapon();
+    //удаление предмета из коробки
+    removeObject () {
+        if (!this.#interactionObject) return;
 
-        this.#weapon = weapon.mesh;
-        this.#wSetting = weapon.wnDrSettings;
-
-        this.#boneBox.add(weapon.mesh);
-        this.#activation();
-    }
-
-    //удаление оружия из рук
-    removeWeapon (){
-        if (!this.#weapon) return;
-
-        this.#boneBox.remove(this.#weapon.mesh);
-        this.#weapon = undefined;
-        this.#wSetting = undefined;
+        this.#boneBox.remove(this.#interactionObject.mesh);
+        this.#interactionObject = undefined;
+        this.#IOSetting = undefined;
     }
 
     clear () {
         this.#aimShoulder = undefined;
         this.#boneBox = undefined;
-        this.#box = undefined;
-        this.#weapon = undefined;
-        this.#mSetting = undefined;
-        this.#wSetting = undefined;
-        this.#iks = undefined;
+        this.#space = undefined;
+        this.#interactionObject = undefined;
+        this.#spaceSetting = undefined;
+        this.#IOSetting = undefined;
+        this.#targetBones = undefined;
+        this.#aimShoulderShift = undefined;
     }
 
+    /**добавление предмета в коробку @param {Object3D} value */
+    set object (value) {
+        this.removeObject();
+
+        this.#interactionObject = value.mesh;
+        this.#IOSetting = value.wnDrSettings;
+
+        this.#boneBox.add(value.mesh);
+        this.#activation();
+    }
+
+    /**указывает точку в пространтсве куда направлена коробка(boneBox) @param {Vector3} value */
     set lookAt (value) {
-        this.#boneBox.lookAt( value );
+        this.#boneBox.lookAt(value);
     }
 }
