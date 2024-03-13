@@ -174,4 +174,15 @@ class Transitions extends State {
 }
 
 
-export { Stand, Crouch, Prone, Death, Interaction, PosesBehindTheObject, Transitions }
+/** @type {Object.<keyof, State>} */
+const states = {
+    stand: Stand,
+    crouch: Crouch,
+    prone: Prone,
+    death: Death,
+    interaction: Interaction,
+    forVehicle: PosesBehindTheObject,
+    posechange: Transitions
+};
+
+export default states

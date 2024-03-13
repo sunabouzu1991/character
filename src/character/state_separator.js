@@ -1,6 +1,6 @@
 import RecordPlayer from "./animation/RecordPlayer.js";
 import CCDIKManager from "./animation/CCDIKManager.js";
-import { Stand, Crouch, Prone, Death, Interaction, PosesBehindTheObject, Transitions } from './animation/states.js';
+import states from './animation/states.js';
 
 /** 
  * @typedef { import('./animation/states.js').State } State
@@ -8,16 +8,6 @@ import { Stand, Crouch, Prone, Death, Interaction, PosesBehindTheObject, Transit
  * @typedef { import('../listOfGaming3DModels/ParameterizedCharacter.js').ParameterizedCharacter } ParameterizedCharacter
 */
 
-/** @type {Object.<keyof, State>} */
-const states = {
-    stand: Stand,
-    crouch: Crouch,
-    prone: Prone,
-    death: Death,
-    interaction: Interaction,
-    forVehicle: PosesBehindTheObject,
-    posechange: Transitions
-};
 
 /** StateSeparator класс Посредник
  * @class
