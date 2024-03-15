@@ -2,37 +2,33 @@ import { Vector3, Group, Object3D } from "three";
 
 var vec3 = new Vector3;
 
-/** TargetBoneDriver - управление таргетовыми костями в коробке.
+/** @typedef { import ('./Character.js').HandObject } HandObject*/
+
+/** управление таргетовыми костями в коробке.
  * @class
- * @property {Bone} #aimShoulder - точка крепления для Object3D
- * @property {Vector3} #aimShoulderShift - смещение от точки крепления
- * @property {Group} #boneBox - коробка для таргетовых костей
- * @property {Object3D} #space - Родительское пространство для коробки(boneBox)
- * @property {Object3D} #interactionObject - объект для крепления в коробку
- * @property {Object} #spaceSetting - настройки для TargetBoneDriver
- * @property {Object} #IOSetting - настройки для таргетовых костей
- * @property {{}Bone} #targetBones - список таргетовы костей
+ * @property {Vector3} lookAt - указывает точку в пространтсве куда направлена коробка(boneBox)
+ * @property {Object3D} object - добавление предмета в коробку 
  */
 export default class TargetBoneDriver {
-    /**@type {Bone}*/
+    /**@type {Bone}- точка крепления для Object3D*/
     #aimShoulder;
-    /** @type {Vector3} */
+    /** @type {Vector3} - смещение от точки крепления*/
     #aimShoulderShift;
 
-    /** @type {Group} */
+    /** @type {Group} - коробка для таргетовых костей*/
     #boneBox;
 
-    /** @type {Object3D} */
+    /** @type {Object3D} - Родительское пространство для коробки(boneBox)*/
     #space;
-    /** @type {Object3D} */
+    /** @type {Object3D} - объект для крепления в коробку*/
     #interactionObject;
 
-    /** @type {Object} */
+    /** @type {Object} - настройки для TargetBoneDriver*/
     #spaceSetting;
-    /** @type {Object} */
+    /** @type {Object} - настройки для таргетовых костей*/
     #IOSetting;
 
-    /** @type {Map<string, Object3D>} */
+    /** @type {Map<string, Object3D>} - список таргетовых костей*/
     #targetBones = new Map ([
 		['forend', undefined],
 		['hilt', undefined],
@@ -40,7 +36,7 @@ export default class TargetBoneDriver {
 	]);
 
     constructor ( model ) {
-        this.#spaceSetting = model.wnDrSettings;
+        this.#spaceSetting = model.handSettings;
         this.#boneBox = new Group(); //контейнер под оружие
         this.#space = model.mesh;
         this.#space.add(this.#boneBox);
@@ -73,7 +69,7 @@ export default class TargetBoneDriver {
     }
 
     //удаление предмета из коробки
-    removeObject () {
+    #removeObject () {
         if (!this.#interactionObject) return;
 
         this.#boneBox.remove(this.#interactionObject.mesh);
@@ -92,18 +88,18 @@ export default class TargetBoneDriver {
         this.#aimShoulderShift = undefined;
     }
 
-    /**добавление предмета в коробку @param {Object3D} value */
+    /**@param {HandObject} value*/
     set object (value) {
-        this.removeObject();
+        this.#removeObject();
 
         this.#interactionObject = value.mesh;
-        this.#IOSetting = value.wnDrSettings;
+        this.#IOSetting = value.handSettings;
 
         this.#boneBox.add(value.mesh);
         this.#activation();
     }
 
-    /**указывает точку в пространтсве куда направлена коробка(boneBox) @param {Vector3} value */
+    /** @param {Vector3} value */
     set lookAt (value) {
         this.#boneBox.lookAt(value);
     }

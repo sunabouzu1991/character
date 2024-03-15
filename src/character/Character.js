@@ -1,7 +1,13 @@
 import StateSeparator from "./state_separator.js";
 import CameraControll from "./CameraControll.js";
 import TargetBoneDriver from "./TargetBoneDriver.js";
+import { Object3D } from "three";
 
+
+/**
+ * @typedef { import('./state_separator.js').ParameterizedCharacter } ParameterizedCharacter
+ * @typedef { import('../gaming-model/HandObject.js').HandObject } HandObject
+*/
 
 /** Character класс Посредник
  * @class
@@ -17,29 +23,30 @@ export default class Character {
     #cameraControll;
     #targetBoneDriver;
 
+    /** @param {ParameterizedCharacter} model  @param {AnimationClip[]} animations  @param {Function} callback */
     constructor (model, animations, callback) {
         this.#stateSeparator = new StateSeparator(model, animations, callback);
         this.#cameraControll = new CameraControll(model);
         this.#targetBoneDriver = new TargetBoneDriver(model);
     }
 
+    /** @param {string} value  */
     setState (value) {
         this.#stateSeparator.setState(value);
     }
 
+    /** @param {string} value  */
     setSubState (value) {
         this.#stateSeparator.setSubState(value);
     }
 
+    /**@param {number} x  @param {number} y */
     userCamRotate (x, y) {
         this.#cameraControll.camRotate(x, y);
     }
 
-    userCamSetting (speed, minAngle, maxAngle) {
-
-    }
-
-    update(dt){
+    /**@param {number} dt*/
+    update (dt) {
         let targetVec = this.#cameraControll.aimPoint;
         this.#targetBoneDriver.lookAt = targetVec;
 
@@ -58,16 +65,13 @@ export default class Character {
         this.#targetBoneDriver = undefined;
     }
 
-    set weapon (value) {// object3D or undefined
-        if (value !== undefined) this.#targetBoneDriver.object = value;
-        else this.#targetBoneDriver.removeObject();
+    /**@param {HandObject | undefined} value*/
+    set handObject (value) {
+        this.#targetBoneDriver.object = value;
     }
 
-    get camera () {
-        return this.#cameraControll.camera;
-    }
-
-    get weaponShift () {
-        return this.#targetBoneDriver.aimShoulderShift;
+    /**@param {Object3D} value*/
+    set camera (value) {
+        return this.#cameraControll.camera = value;
     }
 }

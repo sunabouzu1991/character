@@ -1,3 +1,4 @@
+import { Object3D } from "three";
 import LoadManager from "../loadManager";
 
 const uuidSearch = (uuid, array) => {
@@ -7,8 +8,11 @@ const uuidSearch = (uuid, array) => {
 }
 
 export default class ModelSetting { //Abstract
+    /** @type {Object3D} - загруженная 3Д модель*/
 	static mesh;
+    /**@type {string} - указываем расширения файла */
     static fileType;
+    /** @type {string} - указываем путь к файлу */
     static fileSource;
 	static type3D = 'mesh';
 

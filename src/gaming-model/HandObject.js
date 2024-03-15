@@ -1,11 +1,17 @@
 import Model3DSetting from "./ModelSetting.js";
 import { Vector3 } from "three";
 
-export default class Akms3D extends Model3DSetting {
+/** @typedef {HandObject} HandObject */
+
+/**
+ * @class
+ * @method settings - возвращает настройки модели
+*/
+export default class HandObject extends Model3DSetting {
     static fileType = 'gltf';
     static fileSource = '../../models/akms/akms.gltf';
 
-    #weaponDriver = {
+    #handDriver = {
         //положения для крепления таргетовых костей IKSolver
         forend: {// крепление под цевьё
             position: new Vector3( .04, -.06, .57 ),
@@ -25,7 +31,7 @@ export default class Akms3D extends Model3DSetting {
         super();
     }
 
-    get wnDrSettings () {//weaponDriver
-        return this.#weaponDriver;
+    get handSettings () {
+        return this.#handDriver;
     }
 }

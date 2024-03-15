@@ -1,4 +1,4 @@
-import { Euler, Vector3, PerspectiveCamera, Object3D, Camera } from 'three';
+import { Euler, Vector3, Object3D } from 'three';
 
 const vec3 = new Vector3;
 const _PI_2 = Math.PI / 2;
@@ -9,9 +9,6 @@ const _euler = new Euler( 0, 0, 0, 'YXZ' );
  * @property {number} minPolarAngle - минимальный угол поворота по оси X
  * @property {number} maxPolarAngle - максимальный угол поворота по оси X
  * @property {number} pointerSpeed - коэффициэнт скорости вращения
- * @property {Object3D} #point - точка в направление взгляда камеры
- * @property {Object3D} #attach - объект для позиционирования камеры
- * @property {Object3D} #box - Родительское пространство камеры
  * @method camRotate - вращение камеры по экранным координатам
  * @method update - обновление свойств Класса
  * @method aimPoint - точка находящаяся в направление взгляда камеры
@@ -22,28 +19,30 @@ export default class CameraControll {
 	maxPolarAngle = (150/180)*Math.PI; // radians
 	pointerSpeed = 1.0;
 
-	/**@type {Camera}*/
-	camera
-	/**@type {Object3D}*/
+	/**@type {Object3D} - коробка для камеры*/
+	#camBox
+	/**@type {Object3D} - точка в направление взгляда камеры*/
 	#point;
-	/**@type {Object3D}*/
+	/**@type {Object3D} - объект для позиционирования камеры*/
 	#attach;
-	/**@type {Object3D}*/
+	/**@type {Object3D} - Родительское пространство камеры*/
 	#box;
 
 
-	/** @param {ParameterizedCharacter} model  @param {Camera} camera */
-    constructor (model, camera) {
-		this.camera = camera === undefined ? new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.05, 100 ) : camera;
+	/** @param {ParameterizedCharacter} model*/
+    constructor (model) {
+		this.#camBox = new Object3D;
+		this.#camBox.name = 'CameraControll.camBox';
 		this.#box = model.mesh;
 		this.#attach = model.mesh.getObjectByName(model.cameraSetting.bone);
-		this.#box.add(this.camera);
+		this.#box.add(this.#camBox);
 		this.#targetPoint();
     }
 
 	#targetPoint () {
 		this.#point = new Object3D;
-		this.camera.add(this.#point);
+		this.#camBox.add(this.#point);
+		this.#point.name = 'CameraControll.point';
 
 		this.#getCameraDirection(vec3);
 		vec3.multiplyScalar(10);
@@ -52,12 +51,12 @@ export default class CameraControll {
 
 	/** @param {Vector3} v  @return {Vector3} v  */
 	#getCameraDirection( v ) {
-		return v.set( 0, 0, - 1 ).applyQuaternion( this.camera.quaternion );
+		return v.set( 0, 0, - 1 ).applyQuaternion( this.#camBox.quaternion );
 	}
 
 	/**@param {number} x  @param {number} y */
 	camRotate (x, y) {
-		const camera = this.camera;
+		const camera = this.#camBox;
 		_euler.setFromQuaternion( camera.quaternion );
 
 		_euler.y -= x * 0.002 * this.pointerSpeed;
@@ -73,11 +72,20 @@ export default class CameraControll {
 		this.#attach.localToWorld(vec3);
 		this.#box.worldToLocal(vec3);
 
-		this.camera.position.copy(vec3);
+		this.#camBox.position.copy(vec3);
     }
 
 	/**@return {Vector3}*/
 	get aimPoint () {
 		return vec3.setFromMatrixPosition(this.#point.matrixWorld);
+	}
+
+	/**@param {Object3D} value  */
+	set camera (value) {
+		if (this.#camBox.children.length > 0)
+			this.#camBox.children.forEach(child => {
+				if (child.name !== 'CameraControll.point') child.removeFromParent()
+			});
+		this.#camBox.add(value)
 	}
 }

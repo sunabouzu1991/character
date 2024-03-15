@@ -11,8 +11,8 @@ function getBoneIndex(object, skeleton, name){
 
 /** параметризованный персонаж
  * @class
- * @static {string} fileType - указываем расширения файла
- * @static {string} fileSource - указываем путь к файлу
+ * @property {Object} ikSettings - настройки для Инверсной кинематики
+ * @property {Object} handSettings - настройки для контроллера таргетовыми костями
 */
 export default class ParameterizedCharacter extends ModelSetting {
     static fileType = 'gltf';
@@ -102,7 +102,7 @@ export default class ParameterizedCharacter extends ModelSetting {
         }
     ];
 
-    #weaponDriver = {
+    #handDriver = {
         headBone: 'mixamorigHead',          // для вращения головы на точку взгляда
         forend: 'mixamorigtarget_hand_l',    // под цевьё
         hilt: 'mixamorigtarget_hand_r',     // под рукоять
@@ -141,7 +141,7 @@ export default class ParameterizedCharacter extends ModelSetting {
         return this.#iks;
     }
 
-    get wnDrSettings () {//weaponDriver
-        return this.#weaponDriver;
+    get handSettings () {
+        return this.#handDriver;
     }
 }

@@ -8,12 +8,12 @@ import { TransformControls } from 'three/addons/controls/TransformControls.js';
 import Engine from './src/engine/engine.js';
 import Stats from 'three/addons/libs/stats.module.js';
 
-import ParameterizedCharacter from './src/listOfGaming3DModels/ParameterizedCharacter.js';
-import Ground3D from './src/listOfGaming3DModels/ground.js';
-import Animation3D from './src/listOfGaming3DModels/animations.js';
-import Akms3D from './src/listOfGaming3DModels/akms.js';
+import ParameterizedCharacter from './src/gaming-model/ParameterizedCharacter.js';
+import Ground3D from './src/gaming-model/ground.js';
+import Animation3D from './src/gaming-model/animations.js';
+import HandObject from './src/gaming-model/HandObject.js';
 
-import KeyboardAndMouseForCharacter from './src/gameObjectManagmentTools/KeyboardAndMouseForCharacter.js';
+import KeyboardAndMouseForCharacter from './src/model-control/KeyboardAndMouseForCharacter.js';
 
 import ChangeOriginPoints from './src/ChangeOriginPoint.js';
 
@@ -27,12 +27,12 @@ var data = document.getElementById('data');
 var viewWindow = document.getElementById('app');
 var onPointerLockClick = document.getElementById('onPointerLockClick');
 
-[ParameterizedCharacter, Animation3D, Akms3D].forEach( item => item.load() );
+[ParameterizedCharacter, Animation3D, HandObject].forEach( item => item.load() );
 
 function initialize () {
 	var soldier = new ParameterizedCharacter();
 	var animations = new Animation3D();
-	var akms = new Akms3D();
+	var akms = new HandObject();
 
 	//console.log(minMaxRotByClips(animations.mesh, bonesIk));
 
@@ -68,11 +68,11 @@ function initialize () {
 	const character = userControll.character;
 	engine.addModel(character);
 	engine.scene.add(soldier.mesh);
-	character.weapon = akms;
-	var helperCam = new THREE.CameraHelper( character.camera );
+	character.handObject = akms;
+	const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.05, 100 );
+	character.camera = camera;
+	const helperCam = new THREE.CameraHelper( camera );
 	engine.scene.add(helperCam);
-	// var helperSkeleton = new THREE.SkeletonHelper( soldier.mesh );
-	// engine.scene.add(helperSkeleton);
 
 	var testOriginPoint = new ChangeOriginPoints;
 	engine.addModel(testOriginPoint);

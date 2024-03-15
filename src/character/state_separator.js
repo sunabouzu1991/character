@@ -5,7 +5,7 @@ import states from './animation/states.js';
 /** 
  * @typedef { import('./animation/states.js').State } State
  * @typedef { import('./animation/states.js').substate } substate
- * @typedef { import('../listOfGaming3DModels/ParameterizedCharacter.js').ParameterizedCharacter } ParameterizedCharacter
+ * @typedef { import('../gaming-model/ParameterizedCharacter.js').ParameterizedCharacter } ParameterizedCharacter
 */
 
 
