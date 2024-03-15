@@ -149,7 +149,7 @@ class CharacterControll {
 		this.#controll.setSubState(action);
 	}
 
-//#region inputs
+//#region keyboard&mouse inputs
 	set x (value) {
 		if (value !== this.#dir.x)
 			this.#dir.x = value;
@@ -189,9 +189,9 @@ class CharacterControll {
 	}
 
 	camRotate (x, y) {//mousemove
-		this.#controll.userCamRotate(x, y);
+		this.#controll.camRotate(x, y);
 	}
-//#endregion inputs
+//#endregion keyboard&mouse inputs
 
 	get character() {
 		return this.#controll;

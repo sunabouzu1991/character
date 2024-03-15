@@ -70,7 +70,7 @@ function initialize () {
 	engine.scene.add(soldier.mesh);
 	character.handObject = akms;
 	const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.05, 100 );
-	character.camera = camera;
+	character.FPVcam = camera;
 	const helperCam = new THREE.CameraHelper( camera );
 	engine.scene.add(helperCam);
 

@@ -1,5 +1,5 @@
 import StateSeparator from "./state_separator.js";
-import CameraControll from "./CameraControll.js";
+import FPVControll from "./FPVControll.js";
 import TargetBoneDriver from "./TargetBoneDriver.js";
 import { Object3D } from "three";
 
@@ -9,24 +9,26 @@ import { Object3D } from "three";
  * @typedef { import('../gaming-model/HandObject.js').HandObject } HandObject
 */
 
-/** Character класс Посредник
+/**класс Посредник
  * @class
  * @property {Boolean} isCharacter
- * @property {StateSeparator} #stateSeparator
- * @property {CameraControll} #cameraControll
- * @property {TargetBoneDriver} #targetBoneDriver
- */
+ * @property {HandObject | undefined} handObject
+ * @property {Object3D} FPVcam - добавляем камеру для вида от первого лица
+ * @method setState(value) - устанавливаем состояние
+ * @method setSubState(value) - устанавливаем подсостояние
+ * @method camRotate - вращение коробкой для FPV камеры, указанием пиксельных координат
+*/
 export default class Character {
     isCharacter = true;
 
     #stateSeparator;
-    #cameraControll;
+    #FPVControll;
     #targetBoneDriver;
 
     /** @param {ParameterizedCharacter} model  @param {AnimationClip[]} animations  @param {Function} callback */
     constructor (model, animations, callback) {
         this.#stateSeparator = new StateSeparator(model, animations, callback);
-        this.#cameraControll = new CameraControll(model);
+        this.#FPVControll = new FPVControll(model);
         this.#targetBoneDriver = new TargetBoneDriver(model);
     }
 
@@ -41,18 +43,18 @@ export default class Character {
     }
 
     /**@param {number} x  @param {number} y */
-    userCamRotate (x, y) {
-        this.#cameraControll.camRotate(x, y);
+    camRotate (x, y) {
+        this.#FPVControll.camRotate(x, y);
     }
 
     /**@param {number} dt*/
     update (dt) {
-        let targetVec = this.#cameraControll.aimPoint;
+        let targetVec = this.#FPVControll.aimPoint;
         this.#targetBoneDriver.lookAt = targetVec;
 
         this.#stateSeparator.update(dt);
         this.#targetBoneDriver.update();
-        this.#cameraControll.update();
+        this.#FPVControll.update();
     }
 
     clear () {
@@ -61,7 +63,7 @@ export default class Character {
 
         this.isCharacter = undefined;
         this.#stateSeparator = undefined;
-        this.#cameraControll = undefined;
+        this.#FPVControll = undefined;
         this.#targetBoneDriver = undefined;
     }
 
@@ -71,7 +73,7 @@ export default class Character {
     }
 
     /**@param {Object3D} value*/
-    set camera (value) {
-        return this.#cameraControll.camera = value;
+    set FPVcam (value) {
+        return this.#FPVControll.camera = value;
     }
 }

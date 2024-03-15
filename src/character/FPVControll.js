@@ -4,16 +4,16 @@ const vec3 = new Vector3;
 const _PI_2 = Math.PI / 2;
 const _euler = new Euler( 0, 0, 0, 'YXZ' );
 
-/**	CameraControll - управление поворотом камеры
+/**управление поворотом FPV камеры
  * @class
  * @property {number} minPolarAngle - минимальный угол поворота по оси X
  * @property {number} maxPolarAngle - максимальный угол поворота по оси X
  * @property {number} pointerSpeed - коэффициэнт скорости вращения
- * @method camRotate - вращение камеры по экранным координатам
- * @method update - обновление свойств Класса
+ * @method camRotate - вращение FPV камеры по экранным координатам
  * @method aimPoint - точка находящаяся в направление взгляда камеры
+ * @method update - обновление свойств Класса
 */
-export default class CameraControll {
+export default class FPVControll {
 	// Установите ограничение наклона камеры. Диапазон от 0 до радиан Math.PI.
 	minPolarAngle = (30/180)*Math.PI; // radians
 	maxPolarAngle = (150/180)*Math.PI; // radians
@@ -32,7 +32,7 @@ export default class CameraControll {
 	/** @param {ParameterizedCharacter} model*/
     constructor (model) {
 		this.#camBox = new Object3D;
-		this.#camBox.name = 'CameraControll.camBox';
+		this.#camBox.name = 'FPVControll.camBox';
 		this.#box = model.mesh;
 		this.#attach = model.mesh.getObjectByName(model.cameraSetting.bone);
 		this.#box.add(this.#camBox);
@@ -42,7 +42,7 @@ export default class CameraControll {
 	#targetPoint () {
 		this.#point = new Object3D;
 		this.#camBox.add(this.#point);
-		this.#point.name = 'CameraControll.point';
+		this.#point.name = 'FPVControll.point';
 
 		this.#getCameraDirection(vec3);
 		vec3.multiplyScalar(10);
@@ -84,7 +84,7 @@ export default class CameraControll {
 	set camera (value) {
 		if (this.#camBox.children.length > 0)
 			this.#camBox.children.forEach(child => {
-				if (child.name !== 'CameraControll.point') child.removeFromParent()
+				if (child.name !== 'FPVControll.point') child.removeFromParent()
 			});
 		this.#camBox.add(value)
 	}
