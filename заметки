@@ -1,3 +1,5 @@
+Procedural Animation https://blog.littlepolygon.com/posts/loco1/
+
 Последовательнось проигрывания боксов для ИК Солвера
 
 frustumCulled работает некоректно при отыгрывание анимации (проверка идёт за счёт класса Frustum который проверяет boundingSphere у object.geometry, решение при смене позы или 
@@ -18,9 +20,8 @@ Character:
     1. разделить анимации всего тела на 3 группы: mixamorig(prefix) +
         spine: Spine, Spine1, Spine2, Neck, Head, Head_end
         hands: Shoulder, Arm, ForeArm, Hand
-        legs: UpLeg, Leg, Foot, ToBase
-    или верхняя часть тела и нижняя часть тела
+        legs: UpLeg, Leg, Foot, ToBase или верхняя часть тела и нижняя часть тела
 
     2. добавить таргетовые кости для локтей ?
     3. упрощение материалов в родительском game3Dmodel +/-
-    4. CCDIKSolver и Animation.Mixer в паралельный поток ( лучше создать новый проект )
+    4. Procedural animation: locomotion
