@@ -1,5 +1,5 @@
 import { CCDIKSolver } from 'three/addons/animation/CCDIKSolver.js';
-import { Object3D, Quaternion, Vector3 } from 'three';
+import { Object3D, Quaternion, SkinnedMesh, Vector3 } from 'three';
 
 /**
  * @typedef {import('../state_separator.js').ParameterizedCharacter} ParameterizedCharacter
@@ -12,8 +12,9 @@ import { Object3D, Quaternion, Vector3 } from 'three';
  * @property {Vector3 | undefined} rotationMax — (необязательно) Максимальный предел вращения. По умолчанию не определено.
  * @property {boolean | true} enabled — (необязательно) Значение по умолчанию — true.
 
- * @typedef boneNode - 
- * @type {object}
+ * @typedef {object} boneNode - 
+ * @property {string} name — название ноды. 
+ * @property {boolean} off — отключаем для обработки ИК. 
  * @property {number} target — Целевая кость. 
  * @property {number} effector — Эффекторная кость.
  * @property {Link[]} links — Массив Link, определяющих кости ссылок.
@@ -39,7 +40,7 @@ class IKSolver extends CCDIKSolver {
         super( mesh, iks )
     }
 
-    /** @param {*} ik  */
+    /** @param {boneNode} ik  */
     updateOne ( ik ) {
         if (ik.off === true) return;
 
@@ -63,14 +64,18 @@ class IKSolver extends CCDIKSolver {
 
 
 export default class CCDIKManager {
+    /** @type {IKSolver} */
     #engine;
+    /** @type {iks} */
     #iks;
 
+    /** @param {SkinnedMesh} skinnedMesh  @param {iks} iks */
     constructor (skinnedMesh, iks) {
         this.#iks = iks;
         this.#engine = new IKSolver( skinnedMesh, this.#iks );
     }
 
+    /** @param {string[]} arr  */
     iksSwitch (arr) {
         this.#iks.forEach(ik => ik.off = false);
 

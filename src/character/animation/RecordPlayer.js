@@ -105,7 +105,7 @@ export default class RecordPlayer {
 			this.#bodyActions.set( key, new PartBodyAnimation(this) );
 	}
 
-	/**
+	/** посылаем настройки подсостояния для проигрывания анимации
 	 * @param {string} name  @param {bodyPart} bodyPart  @param {boolean} once  
 	 * @param {number} [timeScale=1]  @param {number} [duration=0.4]
 	*/

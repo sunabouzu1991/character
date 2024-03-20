@@ -28,7 +28,8 @@ export default class Animation3D extends AbstractModelSetting {
         this.mesh = groupClips;
     }
 
-    #createToClip (clip, groupName, boneNames) {//AnimationClip, string, []strings
+    /** @param {AnimationClip} clip  @param {string} groupName  @param {string[]} boneNames */
+    #createToClip (clip, groupName, boneNames) {
         let tracks = [];
 
         boneNames.forEach(name => {

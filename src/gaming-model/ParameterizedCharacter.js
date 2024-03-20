@@ -7,7 +7,10 @@ function getBoneIndex(object, skeleton, name){
 }
 
 
-/** @typedef {ParameterizedCharacter} ParameterizedCharacter */
+/** 
+ * @typedef {ParameterizedCharacter} ParameterizedCharacter
+ * @typedef { import('../character/animation/CCDIKManager.js').iks } iks
+*/
 
 /** параметризованный персонаж
  * @class
@@ -18,17 +21,7 @@ export default class ParameterizedCharacter extends ModelSetting {
     static fileType = 'gltf';
     static fileSource = '../../models/soldier/soldier.gltf';
 
-/*  target — Target bone.
-    effector — Effector bone.
-    links — An array of Object specifying link bones.
-        index — Link bone.
-        limitation — (optional-new Vector3( 1, 0, 0 )) Rotation axis. Default is undefined.
-        rotationMin — (optional) Rotation minimum limit. Default is undefined.
-        rotationMax — (optional) Rotation maximum limit. Default is undefined.
-        enabled — (optional) Default is true.
-    iteration — (optional) Iteration number of calculation. Smaller is faster but less precise. Default is 1.
-    minAngle — (optional) Minimum rotation angle in a step. Default is undefined.
-    maxAngle — (optional) Maximum rotation angle in a step. Default is undefined.*/
+    /** @type {iks} */
     #iks = [
         // {
 		//     name: 'spine',
