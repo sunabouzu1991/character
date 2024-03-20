@@ -137,4 +137,4 @@ function initialize () {
 	animate();
 }
 
-setTimeout(initialize, 1000);
+setTimeout(initialize, 3000);

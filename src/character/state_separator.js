@@ -41,8 +41,11 @@ export default class StateSeparator {
 
     /**@param {string} value  */
     setSubState (value) {
-        this.#subState = this.#state.getSubstate(value);
-        this.#play();
+        const substate = this.#state.getSubstate(value);
+        if (substate !== undefined) {
+            this.#subState = this.#state.getSubstate(value);
+            this.#play();
+        }
     }
 
     #play () {

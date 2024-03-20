@@ -121,7 +121,7 @@ export default class ParameterizedCharacter extends ModelSetting {
         });
 
 
-        let skinnedMesh = this.mesh.getObjectByName("shevron_1");
+        let skinnedMesh = this.mesh.getObjectByName("Ch49_body2");
         this.#iks.forEach(item => {
             item.target = getBoneIndex(this.mesh, skinnedMesh.skeleton, item.target);
             item.effector = getBoneIndex(this.mesh, skinnedMesh.skeleton, item.effector);

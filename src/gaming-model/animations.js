@@ -12,7 +12,7 @@ export default class Animation3D extends AbstractModelSetting {
         this.#divideIntoGroups();
     }
 
-    // Разделение анимационных клипов по группам костей(частей тела), основной клип(full body) остаётся
+    // Разделение анимационных клипов по группам (частей тела)
     #divideIntoGroups() {
         let groupClips = [];
 

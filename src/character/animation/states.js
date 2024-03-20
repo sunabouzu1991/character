@@ -6,9 +6,10 @@
 */
 
 
-/** State - Абстрактный класс
+/** Абстрактный класс
  * @class
  * @method getSubstate - возвращает подсостояние
+ * @property {substate} defaults
 */
 class State {
 	constructor() {
@@ -22,7 +23,7 @@ class State {
 			//throw new Error("Метод Enter должен быть реализован")
 	}
 
-	/**@param {string} value  @return {substate}*/
+	/**@param {string} value  @return {substate | undefined}*/
 	getSubstate (value) {
 		let anim;
 		if(value === '')
@@ -32,8 +33,10 @@ class State {
 
 		if (anim)
 			return anim;
-		else
-			console.error(this.constructor.name, value, 'подсостояние не указанно либо отсутствует')
+		else {
+			console.error(this.constructor.name, value, 'подсостояние не указанно либо отсутствует');
+			return undefined;
+		}
 	}
 }
 
@@ -45,24 +48,12 @@ class Stand extends State {
 	walk_left = { name: "stand_left_walk_rifle", bodyPart: { spine_: 1, legs_: 1}, ikOff: ['spine'] };
 	walk_right = { name: "stand_right_walk_rifle", bodyPart: { spine_: 1, legs_: 1}, ikOff: ['spine'] };
 
-	walk_forwardleft = {name: "stand_forwardLeft_walk_rifle"};
-	walk_forwardright = {name: "stand_forwardRight_walk_rifle"};
-	walk_backwardleft = {name: "stand_backwardLeft_walk_rifle"};
-	walk_backwardright = {name: "stand_backwardRight_walk_rifle"};
-
 	run_forward = {name: "stand_forward_quickWalk_rifle"};
 	run_backward = {name: "stand_backward_quickWalk_rifle"};
 	run_left = {name: "stand_left_quickWalk_rifle"};
 	run_right = {name: "stand_right_quickWalk_rifle"};
 
-	run_forwardleft = {name: "stand_forwardLeft_quickWalk_rifle"};
-	run_forwardright = {name: "stand_forwardRight_quickWalk_rifle"};
-	run_backwardleft = {name: "stand_backwardLeft_quickWalk_rifle"};
-	run_backwardright = {name: "stand_backwardRight_quickWalk_rifle"};
-
 	sprint_forward = {name: "stand_forward_sprint_rifle", ikOff: ['spine']};
-	sprint_forwardleft = { };
-	sprint_forwardright = { };
 
 	jump = { }
 
@@ -74,29 +65,17 @@ class Stand extends State {
 }
 
 class Crouch extends State {
-	walk_forward = {name: "crouch_forward_walk_rifle", };
-	walk_backward = {name: "crouch_backward_walk_rifle", };
-	walk_left = {name: "crouch_left_walk_rifle", };
-	walk_right = {name: "crouch_right_walk_rifle", };
+	walk_forward = {};
+	walk_backward = {};
+	walk_left = {};
+	walk_right = {};
 
-	walk_forwardleft = {name: "crouch_forwardLeft_walk_rifle", };
-	walk_forwardright = {name: "crouch_forwardRight_walk_rifle", };
-	walk_backwardleft = {name: "crouch_backwardLeft_walk_rifle", };
-	walk_backwardright = {name: "crouch_backwardRight_walk_rifle", };
+	run_forward = {};
+	run_backward = {};
+	run_left = {};
+	run_right = {};
 
-	run_forward = {name: "crouch_forward_quickWalk_rifle", };
-	run_backward = {name: "crouch_backward_quickWalk_rifle", };
-	run_left = {name: "crouch_left_quickWalk_rifle", };
-	run_right = {name: "crouch_right_quickWalk_rifle", };
-
-	run_forwardleft = {name: "crouch_forwardLeft_quickWalk_rifle", };
-	run_forwardright = {name: "crouch_forwardRight_quickWalk_rifle", };
-	run_backwardleft = {name: "crouch_backwardLeft_quickWalk_rifle", };
-	run_backwardright = {name: "crouch_backwardRight_quickWalk_rifle", };
-
-	sprint_forward = {name: "stand_forward_sprint_rifle", };
-
-	default = {name:"crouch_idle_rifle", };
+	default = {};
 
 	constructor() {
 		super();
@@ -104,14 +83,14 @@ class Crouch extends State {
 }
 
 class Prone extends State {
-	walk_forward = {name: "prone_forward_walk_rifle",  ikOff: ['spine', 'left_hand']}
-	walk_backward = {name: "prone_forward_walk_rifle", timeScale: -1, ikOff: ['spine', 'left_hand']}
-	walk_left = {name:"prone_left_walk_rifle",  ikOff: ['spine', 'left_hand']}
-	walk_right = {name:"prone_right_walk _rifle",  ikOff: ['spine', 'left_hand']}
+	walk_forward = {}
+	walk_backward = {}
+	walk_left = {}
+	walk_right = {}
 
-	sprint_forward = {name: "prone_forward_sprint_rifle",  ikOff: ['spine', 'left_hand']};
+	sprint_forward = {};
 
-	default = {name:"prone_idle_rifle",  ikOff: ['spine']}
+	default = {}
 
 	constructor() {
 		super();
@@ -119,12 +98,12 @@ class Prone extends State {
 }
 
 class Death extends State {
-	stand = {once: true,  }
-	crouch = {once: true,  }
-	prone = {once: true,  }
-	drive = {once: true,  }
+	stand = {}
+	crouch = {}
+	prone = {}
+	drive = {}
 
-	default = {once: true,  }
+	default = {}
 
 	constructor() {
 		super();
@@ -142,12 +121,6 @@ class Interaction extends State {
 }
 
 class PosesBehindTheObject extends State {
-	ptrk = { }
-	ags = { }
-	dshk = { }
-	bussol = {}
-	gaubica = { }
-	minomet = { }
 	driving = {}
 	passenger = {}
 
@@ -159,14 +132,16 @@ class PosesBehindTheObject extends State {
 }
 
 class Transitions extends State {
-	crouch_stand = {name:"idle_rifle", once: true}
-	crouch_prone = {name:"crouch_to_prone_rifle", once: true, ikOff: ['spine']}
+	crouch_stand = {}
+	crouch_prone = {}
 
-	prone_crouch = {name:"prone_to_crouch_rifle", once: true, ikOff: ['spine']}
-	prone_stand = {name:"prone_to_crouch_rifle", once: true, ikOff: ['spine']}
+	prone_crouch = {}
+	prone_stand = {}
 
-	stand_crouch = {name:"crouch_idle_rifle", once: true, ikOff: ['spine']}
-	stand_prone = {name:"crouch_to_prone_rifle", once: true, ikOff: ['spine']}
+	stand_crouch = {}
+	stand_prone = {}
+
+	default = {}
 
 	constructor() {
 		super();
@@ -174,7 +149,7 @@ class Transitions extends State {
 }
 
 
-/** @type {Object.<keyof, State>} */
+/** @type {Object.<string, State>} */
 const states = {
     stand: Stand,
     crouch: Crouch,
